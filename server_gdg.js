@@ -2,10 +2,10 @@ var express = require("express");
 var app = express();
 var jwt = require('jsonwebtoken');
 var port = 3000;
-
+require('dotenv').config();
 
 var mysql2 = require("mysql2");
-let dbconfig = "mysql://avnadmin:AVNS_bQ3CJKDJDEa2iFRFeDi@mysql-1917bd63-adityajindal704-0cd0.j.aivencloud.com:20741/defaultdb"
+var dbconfig=process.env.db_config;
 let mySqlVen = mysql2.createConnection(dbconfig);
 
 mySqlVen.connect(function (errKuch) {
@@ -18,7 +18,7 @@ mySqlVen.connect(function (errKuch) {
 
 
 var nodemailer = require("nodemailer");
-require('dotenv').config();
+
 var Email = process.env.main_email;
 var Pass = process.env.app_pass;
 var secret = process.env._secret;
