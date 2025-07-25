@@ -5,6 +5,18 @@ var port = 3000;
 
 
 var mysql2 = require("mysql2");
+let dbconfig = "mysql://avnadmin:AVNS_bQ3CJKDJDEa2iFRFeDi@mysql-1917bd63-adityajindal704-0cd0.j.aivencloud.com:20741/defaultdb"
+let mySqlVen = mysql2.createConnection(dbconfig);
+
+mySqlVen.connect(function (errKuch) {
+    if (errKuch == null)
+        console.log("AiVen Connnected Successfully");
+    else
+        console.log(errKuch.message);
+})
+
+
+
 var nodemailer = require("nodemailer");
 require('dotenv').config();
 var Email = process.env.main_email;
@@ -38,9 +50,9 @@ app.post("/mail_otp", function (req, resp) {
     let txtEmail = req.body.email;
     let name = req.body.name;
 
-    console.log(txtEmail);
-    console.log(Email);
-    console.log(name);
+    // console.log(txtEmail);
+    // console.log(Email);
+    // console.log(name);
 
     otp = Math.floor(1000 + Math.random() * 9000);
 
@@ -80,13 +92,21 @@ app.post("/mail_otp", function (req, resp) {
 app.get("/sign_up", function (req, resp) {
     let txtotp = req.query.otp;
     let txtEmail = req.query.email;
+    let txtName = req.query.name;
 
     if (otp == txtotp) {
+
+        mySqlVen.query("insert into signup_details values(?,?,current_date())",[txtEmail,txtName],function(err){
+            if(err != null){
+                resp.send(err);
+            }
+        })
+
         
    let token = jwt.sign({ mailid: txtEmail } ,secret)
    resp.cookie("token",token);
 
-    console.log(token);
+    // console.log(token);
     resp.send("done");
     }
     else {

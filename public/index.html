@@ -50,12 +50,13 @@
                 url: "/sign_up",
                 data:{
                     otp: $("#exampleInputOtp").val(),
-                    email: $("#exampleInputEmail1").val()
+                    email: $("#exampleInputEmail1").val(),
+                    name : $("#exampleInputName").val()
                 }
             }
 
             $.ajax(obj).then(function(response){
-                alert(response);
+                // alert(response);
                 location.href = "dashboard.html";
             }).fail(function(err){
                 alert(err);
