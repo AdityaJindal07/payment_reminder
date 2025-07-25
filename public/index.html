@@ -47,14 +47,16 @@
         $("#signup").click(function(){
             let obj = {
                 type:"get",
-                url: "/match_otp",
+                url: "/sign_up",
                 data:{
-                    otp: $("#exampleInputOtp").val()
+                    otp: $("#exampleInputOtp").val(),
+                    email: $("#exampleInputEmail1").val()
                 }
             }
 
             $.ajax(obj).then(function(response){
                 alert(response);
+                location.href = "dashboard.html";
             }).fail(function(err){
                 alert(err);
             })

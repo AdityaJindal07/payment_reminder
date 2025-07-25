@@ -1,22 +1,27 @@
 var express = require("express");
 var app = express();
+var jwt = require('jsonwebtoken');
 var port = 3000;
+
 
 var mysql2 = require("mysql2");
 var nodemailer = require("nodemailer");
 require('dotenv').config();
 var Email = process.env.main_email;
 var Pass = process.env.app_pass;
+var secret = process.env._secret;
 
 app.listen(port, function () {
     console.log("Server started at port no:3000");
 })
 
+var cookieParser = require('cookie-parser');
 
 
 app.use(express.static("public"));
 app.use(express.urlencoded(true));
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", function (req, resp) {
     console.log(__dirname);
@@ -37,7 +42,7 @@ app.post("/mail_otp", function (req, resp) {
     console.log(Email);
     console.log(name);
 
-     otp = Math.floor(1000 + Math.random() * 9000);
+    otp = Math.floor(1000 + Math.random() * 9000);
 
     var mailer = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -61,7 +66,7 @@ app.post("/mail_otp", function (req, resp) {
         if (err) {
             console.log(err);
         }
-        else{
+        else {
             console.log(result);
             resp.send("check you email!");
         }
@@ -72,12 +77,26 @@ app.post("/mail_otp", function (req, resp) {
     })
 })
 
-app.get("/match_otp",function(req,resp){
+app.get("/sign_up", function (req, resp) {
     let txtotp = req.query.otp;
-    
-    if(otp == txtotp){
-        resp.send("verified");
+    let txtEmail = req.query.email;
+
+    if (otp == txtotp) {
+        
+   let token = jwt.sign({ mailid: txtEmail } ,secret)
+   resp.cookie("token",token);
+
+    console.log(token);
+    resp.send("done");
     }
-    else
+    else {
         resp.send("otp invalid");
+    }
+
+})
+
+app.get("/read",function(req,resp){
+    let data = jwt.verify(req.cookies.token , secret);
+    console.log(data.mailid);
+    txtEmail = data.mailid;
 })
