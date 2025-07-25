@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
@@ -25,52 +25,114 @@
 
 
     <script>
-    $(document).ready(function(){
-        $("#get_otp").click(function(){
-            let obj = {
-                type:"post",
-                url: "/mail_otp",
-                data:{
-                email : $("#exampleInputEmail1").val(),
-                name : $("#exampleInputName").val()
+        $(document).ready(function () {
+            $("#get_otp").click(function () {
+                let obj = {
+                    type: "post",
+                    url: "/mail_otp",
+                    data: {
+                        email: $("#exampleInputEmail1").val(),
+                        name: $("#exampleInputName").val()
 
-            }
-        }
-
-            $.ajax(obj).then(function(response){
-                alert(response);
-            }).fail(function(err){
-                alert(err);
-            })
-        })
-
-        $("#signup").click(function(){
-            let obj = {
-                type:"get",
-                url: "/sign_up",
-                data:{
-                    otp: $("#exampleInputOtp").val(),
-                    email: $("#exampleInputEmail1").val(),
-                    name : $("#exampleInputName").val()
+                    }
                 }
-            }
 
-            $.ajax(obj).then(function(response){
-                // alert(response);
-                location.href = "dashboard.html";
-            }).fail(function(err){
-                alert(err);
+                $.ajax(obj).then(function (response) {
+                   if(response == "already signed up"){
+                    alert(response);
+                   
+
+                   }
+                }).fail(function (err) {
+                    alert(err);
+                })
+            })
+
+            $("#signup").click(function () {
+                let obj = {
+                    type: "get",
+                    url: "/sign_up",
+                    data: {
+                        otp: $("#exampleInputOtp").val(),
+                        email: $("#exampleInputEmail1").val(),
+                        name: $("#exampleInputName").val()
+
+                    }
+                }
+
+                $.ajax(obj).then(function (response) {
+                    if (response == "done") {
+                        location.href = "dashboard.html";
+                    }
+                   else{
+                    alert(response);
+                   }
+                }).fail(function (err) {
+                    alert(err);
+                })
+            })
+
+
+            $("#get_otp2").click(function () {
+                let obj = {
+                    type: "post",
+                    url: "/mail_otp2",
+                    data: {
+                        email: $("#exampleInputEmail2").val(),
+
+
+                    }
+                }
+
+                $.ajax(obj).then(function (response) {
+                    alert(response);
+                }).fail(function (err) {
+                    alert(err);
+                })
+            })
+
+            $("#sign_in").click(function () {
+                let obj = {
+                    type: "get",
+                    url: "/sign_in",
+                    data: {
+                        otp: $("#exampleInputOtp2").val(),
+                        email: $("#exampleInputEmail2").val()
+                    }
+                }
+
+                $.ajax(obj).then(function (response) {
+                    if (response == "valid") {
+                        location.href = "dashboard.html";
+                    }
+
+                    else {
+                        alert(response);
+                    }
+                }).fail(function (err) {
+                    alert(err);
+                })
             })
         })
-    })
-</script>
+    </script>
 
 
-    </head>
+</head>
 
 
 
 <body>
+
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand">payment reminder</a>
+            <form class="d-flex" role="search">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+                    sign in
+                </button>
+            </form>
+        </div>
+    </nav>
 
     <div class="container p-4">
 
@@ -92,7 +154,8 @@
 
 
             <!-- Button trigger modal -->
-            <button type="button" id="get_otp" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <button type="button" id="get_otp" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#exampleModal">
                 GET OTP
             </button>
 
@@ -113,12 +176,44 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="signup" >Sign up</button>
+                            <button type="button" class="btn btn-primary" id="signup">Sign up</button>
                         </div>
                     </div>
                 </div>
             </div>
         </form>
+
+        <!-- Button trigger modal -->
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Sign in</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Email address</label>
+                            <input type="text" class="form-control" id="exampleInputEmail2"
+                                aria-describedby="emailHelp">
+                            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                            <button type="button" class="btn btn-primary" id="get_otp2">get otp</button>
+                            <div class="mb-3">
+                                <label for="exampleInputotp" class="form-label">OTP</label>
+                                <input type="number" class="form-control" id="exampleInputOtp2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="sign_in">sign in</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 

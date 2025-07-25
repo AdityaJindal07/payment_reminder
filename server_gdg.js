@@ -5,7 +5,7 @@ var port = 3000;
 require('dotenv').config();
 
 var mysql2 = require("mysql2");
-var dbconfig=process.env.db_config;
+var dbconfig = process.env.db_config;
 let mySqlVen = mysql2.createConnection(dbconfig);
 
 mySqlVen.connect(function (errKuch) {
@@ -50,9 +50,9 @@ app.post("/mail_otp", function (req, resp) {
     let txtEmail = req.body.email;
     let name = req.body.name;
 
-    // console.log(txtEmail);
-    // console.log(Email);
-    // console.log(name);
+    console.log(txtEmail);
+    console.log(Email);
+    console.log(name);
 
     otp = Math.floor(1000 + Math.random() * 9000);
 
@@ -73,41 +73,113 @@ app.post("/mail_otp", function (req, resp) {
         text: `your otp is ${otp}`
     }
 
-    mailer.sendMail(maildetail, function (err, result) {
+    mySqlVen.query("select * from signup_details where emailid = ?", [txtEmail], function (err, allRecords) {
 
-        if (err) {
-            console.log(err);
+        if (allRecords.length == 0) {
+
+            mailer.sendMail(maildetail, function (err, result) {
+
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    console.log(result);
+                    resp.send("check you email!");
+                }
+
+            })
+
         }
         else {
-            console.log(result);
-            resp.send("check you email!");
+            resp.send("already signed up");
         }
-
-
-
-
     })
+
+
+
+
+
+
 })
+
+
+app.post("/mail_otp2", function (req, resp) {
+
+    let txtEmail = req.body.email;
+    let name = req.body.name;
+
+    console.log(txtEmail);
+    console.log(Email);
+    console.log(name);
+
+    otp = Math.floor(1000 + Math.random() * 9000);
+
+    var mailer = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+            user: Email,
+            pass: Pass
+        }
+    });
+
+    var maildetail = {
+        from: Email,
+        to: txtEmail,
+        subject: 'OTP for gdg_project',
+        text: `your otp is ${otp}`
+    }
+
+    mySqlVen.query("select * from signup_details where emailid = ?", [txtEmail], function (err, allRecords) {
+
+        if (allRecords.length != 0) {
+
+            mailer.sendMail(maildetail, function (err, result) {
+
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    console.log(result);
+                    resp.send("check you email!");
+                }
+
+            })
+
+        }
+        else {
+            resp.send("plz sign up first");
+        }
+    })
+
+
+
+
+
+
+})
+
 
 app.get("/sign_up", function (req, resp) {
     let txtotp = req.query.otp;
     let txtEmail = req.query.email;
     let txtName = req.query.name;
 
-    if (otp == txtotp) {
+     if (otp == txtotp) {
 
-        mySqlVen.query("insert into signup_details values(?,?,current_date())",[txtEmail,txtName],function(err){
-            if(err != null){
+        mySqlVen.query("insert into signup_details values(?,?,current_date())", [txtEmail, txtName], function (err) {
+            if (err) {
                 resp.send(err);
             }
         })
 
-        
-   let token = jwt.sign({ mailid: txtEmail } ,secret)
-   resp.cookie("token",token);
 
-    // console.log(token);
-    resp.send("done");
+        let token = jwt.sign({ mailid: txtEmail }, secret)
+        resp.cookie("token", token);
+
+        // console.log(token);
+        resp.send("done");
     }
     else {
         resp.send("otp invalid");
@@ -115,8 +187,31 @@ app.get("/sign_up", function (req, resp) {
 
 })
 
-app.get("/read",function(req,resp){
-    let data = jwt.verify(req.cookies.token , secret);
+
+
+
+
+
+app.get("/sign_in", function (req, resp) {
+    let txtotp = req.query.otp;
+    let txtEmail = req.query.email;
+
+    if (txtotp == otp) {
+        mySqlVen.query("select * from signup_details where emailid = ?", [txtEmail], function (err, allRecords) {
+
+            if (allRecords.length == 0) {
+                resp.send("Invalid");
+            }
+            else {
+                resp.send("valid");
+            }
+        })
+    }
+})
+
+
+app.get("/read", function (req, resp) {
+    let data = jwt.verify(req.cookies.token, secret);
     console.log(data.mailid);
     txtEmail = data.mailid;
 })
