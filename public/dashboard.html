@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"
+        integrity="sha384-7qAoOXltbVP82dhxHAUje59V5r2YsVfBafyUDxEdApLPmcdhBPg1DKg1ERo0BZlK"
+        crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        body {
+            /* background: linear-gradient(to bottom , rgb(251, 47, 85) , rgba(226, 203, 210, 0.015)); */
+            height: 100vh;
+            background: linear-gradient(135deg, #f0f4f8, #d9e4f5);
+
+
+        }
+
+        .card {
+            transition: all 0.4s ease;
+
+
+
+
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-dark {
+            background-color: #004d4d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-dark:hover {
+            background-color: #006666;
+            color: white;
+        }
+    </style>
+
+</head>
+
+
+
+<body onload="showUser()">
+
+    <nav class="navbar navbar text-light shadow-lg" style="background-color:black;">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1" id="Welcome" style="color: white">*</span>
+            <a href="/do_logout">
+            <input type="submit" class="btn btn-light" name="logout" id="logout" value="Logout">
+            </a>
+        </div>
+    </nav>
+    <div class="section" style="width: 100%; height: 100%;">
+        <div class="heading text-center m-1 mb-5 mt-4" style="color: black;">
+            <h1><b> DASHBOARD</b></h1>
+        </div>
+        <div class="row justify-content-around g-4" style="width: 100%;margin: auto;height: 50vh;">
+
+
+            <div class="card text-center shadow-lg col-lg-3 col-sm-6  p-1">
+                <img src="pics/shuttle2.jpg" class="rounded-circle mx-auto d-block img-fluid"
+                    style="width: 300px; height: 300px;" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">create payment</h5>
+                    <p class="card-text"></p>
+                    <a href="post-payment.html" class="btn btn-dark">create payment</a>
+                </div>
+            </div>
+
+            <div class="card  text-center shadow-lg col-lg-3 col-sm-6 p-1">
+                <img src="pics/event.jpg" class="rounded-circle mx-auto d-block img-fluid"
+                    style="width: 300px; height: 300px;" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Payment Manager</h5>
+                    <p class="card-text">View, edit or cancel events</p>
+                    <a href="paymentManager.html" class="btn btn-dark">Manage</a>
+                </div>
+            </div>
+
+
+
+
+
+        </div>
+    </div>
+
+</body>
+
+</html>

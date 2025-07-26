@@ -166,7 +166,7 @@ app.get("/sign_up", function (req, resp) {
     let txtEmail = req.query.email;
     let txtName = req.query.name;
 
-     if (otp == txtotp) {
+    if (otp == txtotp) {
 
         mySqlVen.query("insert into signup_details values(?,?,current_date())", [txtEmail, txtName], function (err) {
             if (err) {
@@ -203,6 +203,10 @@ app.get("/sign_in", function (req, resp) {
                 resp.send("Invalid");
             }
             else {
+
+                let token = jwt.sign({ mailid: txtEmail }, secret)
+                resp.cookie("token", token);
+
                 resp.send("valid");
             }
         })
@@ -215,3 +219,60 @@ app.get("/read", function (req, resp) {
     console.log(data.mailid);
     txtEmail = data.mailid;
 })
+
+let rid;
+
+app.post("/post_payment", function (req, resp) {
+
+    let emailid = req.body.emailid;
+    let paymentname = req.body.paymentname;
+    let Category = req.body.Category;
+    let amount = req.body.amount;
+    let deadline = req.body.deadline;
+    let otherinfo = req.body.otherinfo;
+
+    rid = Math.floor(1000 + Math.random() * 9000);
+
+    mySqlVen.query("insert into payment_details(rid ,emailid, paymentname, Category, amount, deadline,status, otherinfo) values(?,?,?,?,?,?,?,?)", [rid, emailid, paymentname, Category, amount, deadline, "pending", otherinfo], function (err) {
+        if (err) {
+            resp.send("somethings wrong");
+        }
+        else {
+            resp.send("good");
+        }
+    })
+
+
+})
+
+app.post("/get_id", function (req, resp) {
+
+    mySqlVen.query("select * from payment_details where rid=?", [rid], function (err, allRecords) {
+        if (allRecords.length == 0) {
+            resp.send("somethings wrong");
+        }
+        else if (allRecords.length == 1) {
+
+            resp.send(rid);
+        }
+    })
+})
+
+app.get("/do-fetch-all", function (req, resp) {
+
+    mySqlVen.query("select * from payment_details", function (err, allRecords) {
+        if (err) {
+            resp.send(err);
+
+        }
+        else {
+            resp.send(allRecords);
+        }
+    })
+})
+
+app.get("/do_logout", function (req, resp) {
+    resp.cookie("token","");
+    resp.redirect("/");
+})
+
