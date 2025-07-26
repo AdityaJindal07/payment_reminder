@@ -47,32 +47,67 @@
                 }
             }
             //---------------------------------------------------------
-            $scope.doblock = function (txtEmail,status) {
-                var url = "/block-one?txtEmail=" + txtEmail+"&status="+status;
+            $scope.paid = function (rid) {
+                var url = "/paid";
+                
 
-                $http.get(url).then(allGoodFx, someBadFx);
+                $http.patch(url, { rid: rid }).then(allGoodFx, someBadFx);
 
                 function allGoodFx(response) {
                     // alert(response.data);
                     $scope.doFetchAll();
                 }
                 function someBadFx(response) {
-                    alert(JSON.stringify(response, data));
+                    alert(JSON.stringify(response.data));
                 }
 
             }
 
-             $scope.dounblock = function (txtEmail,status) {
-                var url = "/unblock-one?txtEmail=" + txtEmail+"&status="+status;
+             $scope.overdue = function (rid) {
+                var url = "/overdue";
+                
 
-                $http.get(url).then(allGoodFx, someBadFx);
+                $http.patch(url, { rid: rid }).then(allGoodFx, someBadFx);
 
                 function allGoodFx(response) {
                     // alert(response.data);
                     $scope.doFetchAll();
                 }
                 function someBadFx(response) {
-                    alert(JSON.stringify(response, data));
+                    alert(JSON.stringify(response.data));
+                }
+
+            }
+
+             $scope.cancelled = function (rid) {
+                var url = "/cancelled";
+                
+
+                $http.patch(url, { rid: rid }).then(allGoodFx, someBadFx);
+
+                function allGoodFx(response) {
+                    // alert(response.data);
+                    $scope.doFetchAll();
+                }
+                function someBadFx(response) {
+                    alert(JSON.stringify(response.data));
+                }
+
+            }
+
+
+            $scope.pending = function (rid) {
+                var url = "/pending";
+                
+
+                $http.patch(url, { rid: rid }).then(allGoodFx, someBadFx);
+
+                function allGoodFx(response) {
+                    // alert(response.data);
+                    $scope.doFetchAll();
+                }
+                function someBadFx(response) {
+                    alert(JSON.stringify(response.data));
                 }
 
             }
@@ -112,8 +147,10 @@
                  <td>{{obj.otherinfo}}</td>
                 <td>{{obj.status}}</td>
                
-                <td> <input type="button" value="block" class="btn btn-danger" ng-click="doblock(obj.txtEmail,obj.status)">
-                    <input type="button" value="unblock" class="btn btn-secondary" ng-click="dounblock(obj.txtEmail,obj.status)">
+                <td> <input type="button" value="paid" class="btn btn-primary" ng-click="paid(obj.rid)">
+                    <input type="button" value="overdue" class="btn btn-danger" ng-click="overdue(obj.rid)">
+                    <input type="button" value="cancelled" class="btn btn-secondary" ng-click="cancelled(obj.rid)">
+                     <input type="button" value="pending" class="btn btn-dark" ng-click="pending(obj.rid)">
                 </td>
             </tr>
 

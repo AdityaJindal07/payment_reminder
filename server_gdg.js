@@ -276,3 +276,53 @@ app.get("/do_logout", function (req, resp) {
     resp.redirect("/");
 })
 
+app.patch("/paid",function(req,resp){
+    let rid = req.body.rid;
+
+    mySqlVen.query("update payment_details set status=? where rid=?",["paid",rid],function(err){
+        if(err){
+            resp.send(err.message);
+        }
+        else
+        resp.send("updated");
+    })
+})
+app.patch("/overdue",function(req,resp){
+    let rid = req.body.rid;
+
+    mySqlVen.query("update payment_details set status=? where rid=?",["overdue",rid],function(err){
+        if(err){
+            resp.send(err.message);
+        }
+        else{
+            resp.send("updated")
+        }
+    })
+})
+
+app.patch("/cancelled",function(req,resp){
+    let rid = req.body.rid;
+
+    mySqlVen.query("update payment_details set status=? where rid=?",["cancelled",rid],function(err){
+        if(err){
+            resp.send(err.message);
+        }
+        else{
+            resp.send("updated")
+        }
+    })
+})
+
+app.patch("/pending",function(req,resp){
+    let rid = req.body.rid;
+
+    mySqlVen.query("update payment_details set status=? where rid=?",["pending",rid],function(err){
+        if(err){
+            resp.send(err.message);
+        }
+        else{
+            resp.send("updated")
+        }
+    })
+})
+
