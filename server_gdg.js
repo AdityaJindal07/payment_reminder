@@ -214,6 +214,25 @@ app.get("/sign_in", function (req, resp) {
 })
 
 
+function verifyToken(req, res, next) {
+    let token = req.cookies.token;
+
+    if (!token) {
+        res.send("Access Denied. No token provided.");
+        return;
+    }
+
+    let verified = jwt.verify(token, secret);
+
+    if (verified) {
+        req.user = verified;
+        next();
+    } else {
+        res.send("Invalid Token");
+    }
+}
+
+
 app.get("/read", function (req, resp) {
     let data = jwt.verify(req.cookies.token, secret);
     console.log(data.mailid);
@@ -222,7 +241,7 @@ app.get("/read", function (req, resp) {
 
 let rid;
 
-app.post("/post_payment", function (req, resp) {
+app.post("/post_payment",verifyToken, function (req, resp) {
 
     let emailid = req.body.emailid;
     let paymentname = req.body.paymentname;
@@ -245,7 +264,7 @@ app.post("/post_payment", function (req, resp) {
 
 })
 
-app.post("/get_id", function (req, resp) {
+app.post("/get_id",verifyToken, function (req, resp) {
 
     mySqlVen.query("select * from payment_details where rid=?", [rid], function (err, allRecords) {
         if (allRecords.length == 0) {
@@ -258,7 +277,7 @@ app.post("/get_id", function (req, resp) {
     })
 })
 
-app.get("/do-fetch-all", function (req, resp) {
+app.get("/do-fetch-all",verifyToken, function (req, resp) {
 
     mySqlVen.query("select * from payment_details", function (err, allRecords) {
         if (err) {
@@ -271,12 +290,12 @@ app.get("/do-fetch-all", function (req, resp) {
     })
 })
 
-app.get("/do_logout", function (req, resp) {
+app.get("/do_logout",verifyToken, function (req, resp) {
     resp.cookie("token","");
     resp.redirect("/");
 })
 
-app.patch("/paid",function(req,resp){
+app.patch("/paid",verifyToken,function(req,resp){
     let rid = req.body.rid;
 
     mySqlVen.query("update payment_details set status=? where rid=?",["paid",rid],function(err){
@@ -287,7 +306,7 @@ app.patch("/paid",function(req,resp){
         resp.send("updated");
     })
 })
-app.patch("/overdue",function(req,resp){
+app.patch("/overdue",verifyToken,function(req,resp){
     let rid = req.body.rid;
 
     mySqlVen.query("update payment_details set status=? where rid=?",["overdue",rid],function(err){
@@ -300,7 +319,7 @@ app.patch("/overdue",function(req,resp){
     })
 })
 
-app.patch("/cancelled",function(req,resp){
+app.patch("/cancelled",verifyToken,function(req,resp){
     let rid = req.body.rid;
 
     mySqlVen.query("update payment_details set status=? where rid=?",["cancelled",rid],function(err){
@@ -313,7 +332,7 @@ app.patch("/cancelled",function(req,resp){
     })
 })
 
-app.patch("/pending",function(req,resp){
+app.patch("/pending",verifyToken,function(req,resp){
     let rid = req.body.rid;
 
     mySqlVen.query("update payment_details set status=? where rid=?",["pending",rid],function(err){
