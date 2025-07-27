@@ -30,6 +30,14 @@
 
     <script>
         var mymodule = angular.module("kuchModule", []);
+
+        mymodule.filter('istDate', function () {
+    return function (input) {
+        let date = new Date(input);
+        return date.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+    };
+});
+
         mymodule.controller("kuchController", function ($scope, $http) {
             $scope.jsonArray = [];
             $scope.doFetchAll = function () {
@@ -143,7 +151,7 @@
                 <td>{{obj.paymentname}}</td>
                 <td>{{obj.Category}}</td>
                 <td>{{obj.amount}}</td>
-                <td>{{obj.deadline | date:'medium'}}</td>
+                <td>{{obj.deadline | istDate}}</td>
                  <td>{{obj.otherinfo}}</td>
                 <td>{{obj.status}}</td>
                
