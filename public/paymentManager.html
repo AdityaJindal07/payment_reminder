@@ -32,11 +32,11 @@
         var mymodule = angular.module("kuchModule", []);
 
         mymodule.filter('istDate', function () {
-    return function (input) {
-        let date = new Date(input);
-        return date.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-    };
-});
+            return function (input) {
+                let date = new Date(input);
+                return date.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+            };
+        });
 
         mymodule.controller("kuchController", function ($scope, $http) {
             $scope.jsonArray = [];
@@ -57,7 +57,7 @@
             //---------------------------------------------------------
             $scope.paid = function (rid) {
                 var url = "/paid";
-                
+
 
                 $http.patch(url, { rid: rid }).then(allGoodFx, someBadFx);
 
@@ -71,9 +71,9 @@
 
             }
 
-             $scope.overdue = function (rid) {
+            $scope.overdue = function (rid) {
                 var url = "/overdue";
-                
+
 
                 $http.patch(url, { rid: rid }).then(allGoodFx, someBadFx);
 
@@ -87,9 +87,9 @@
 
             }
 
-             $scope.cancelled = function (rid) {
+            $scope.cancelled = function (rid) {
                 var url = "/cancelled";
-                
+
 
                 $http.patch(url, { rid: rid }).then(allGoodFx, someBadFx);
 
@@ -106,7 +106,7 @@
 
             $scope.pending = function (rid) {
                 var url = "/pending";
-                
+
 
                 $http.patch(url, { rid: rid }).then(allGoodFx, someBadFx);
 
@@ -126,10 +126,11 @@
 <body ng-app="kuchModule" ng-controller="kuchController" ng-init="doFetchAll();">
 
     <center>
-        
-       <div class="col-2 mt-3 p-1 rounded-4 border-1" style="background-color: black; border-radius: 3px;color: white;">
-       <h3>All Payments</h3>
-       </div>
+
+        <div class="col-2 mt-3 p-1 rounded-4 border-1"
+            style="background-color: black; border-radius: 3px;color: white;">
+            <h3>All Payments</h3>
+        </div>
 
         <table class="table text-center mt-4 table-bordered rounded" style="width: 100%;">
             <thead class="table-dark">
@@ -152,13 +153,13 @@
                 <td>{{obj.Category}}</td>
                 <td>{{obj.amount}}</td>
                 <td>{{obj.deadline | istDate}}</td>
-                 <td>{{obj.otherinfo}}</td>
+                <td>{{obj.otherinfo}}</td>
                 <td>{{obj.status}}</td>
-               
+
                 <td> <input type="button" value="paid" class="btn btn-primary" ng-click="paid(obj.rid)">
                     <!-- <input type="button" value="overdue" class="btn btn-danger" ng-click="overdue(obj.rid)"> -->
                     <input type="button" value="cancelled" class="btn btn-secondary" ng-click="cancelled(obj.rid)">
-                     <input type="button" value="pending" class="btn btn-dark" ng-click="pending(obj.rid)">
+                    <input type="button" value="pending" class="btn btn-dark" ng-click="pending(obj.rid)">
                 </td>
             </tr>
 
