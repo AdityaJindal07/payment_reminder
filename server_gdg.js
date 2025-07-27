@@ -284,7 +284,7 @@ app.post("/get_id", verifyToken, function (req, resp) {
 
 app.get("/do-fetch-all", verifyToken, function (req, resp) {
 
-    mySqlVen.query("select * from payment_details", function (err, allRecords) {
+    mySqlVen.query("select * from payment_details where emailid = ?",[req.user.mailid], function (err, allRecords) {
         if (err) {
             resp.send(err);
 
