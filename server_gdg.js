@@ -295,6 +295,11 @@ app.get("/do-fetch-all", verifyToken, function (req, resp) {
 
         }
         else {
+            for (var i = 0; i < allRecords.length; i++) {
+                if (allRecords[i].deadline) {
+                    allRecords[i].deadline = allRecords[i].deadline + '+05:30';
+                }
+            }
             resp.send(allRecords);
         }
     })
