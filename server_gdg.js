@@ -241,6 +241,7 @@ app.get("/read", function (req, resp) {
     let data = jwt.verify(req.cookies.token, secret);
     console.log(data.mailid);
     txtEmail = data.mailid;
+    resp.send(txtEmail);
 })
 
 let rid;
@@ -283,6 +284,8 @@ app.post("/get_id", verifyToken, function (req, resp) {
 })
 
 app.get("/do-fetch-all", verifyToken, function (req, resp) {
+
+    console.log(req.user.mailid);
 
     mySqlVen.query("select * from payment_details where emailid = ?",[req.user.mailid], function (err, allRecords) {
         if (err) {

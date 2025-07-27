@@ -26,11 +26,11 @@
 
 
     <style>
-        body{
-            
-          background: linear-gradient(135deg, #f0f4f8, #d9e4f5);
+        body {
+
+            background: linear-gradient(135deg, #f0f4f8, #d9e4f5);
         }
-    
+
 
         .form-control {
             border: 1px solid black;
@@ -63,6 +63,18 @@
 
     <script>
         $(document).ready(function () {
+
+            $.ajax({
+                type: "get",
+                url: "/read"
+            }).then(function (response) {
+                $("#emailid").val(response);
+            }).fail(function (err) {
+                console.log("Error reading email:", err);
+                alert("Could not auto-load user email.");
+            });
+
+
             $("#emailid").blur(function () {
                 let email = $(this).val().trim();
                 let regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -82,35 +94,35 @@
                     url: "/post_payment",
                     data: {
                         emailid: $("#emailid").val(),
-                       paymentname: $("#paymentname").val(),
-                      Category: $("#Category").val(),
+                        paymentname: $("#paymentname").val(),
+                        Category: $("#Category").val(),
                         amount: $("#amount").val(),
                         deadline: $("#deadline").val(),
                         otherinfo: $("#otherinfo").val(),
-                         }
+                    }
                 }
                 $.ajax(obj).then(function (response) {
-                    if(response == "somethings wrong"){
+                    if (response == "somethings wrong") {
                         alert(response);
                     }
-                    else{
+                    else {
                         let obj2 = {
                             type: "post",
-                            url:"/get_id",
-                            data:{ 
-                              emailid:$("#emailid").val()
+                            url: "/get_id",
+                            data: {
+                                emailid: $("#emailid").val()
                             }
                         }
 
-                        $.ajax(obj2).then(function(response){
-                            if(response != "somethings wrong"){
-                            $("#id").val(response);
+                        $.ajax(obj2).then(function (response) {
+                            if (response != "somethings wrong") {
+                                $("#id").val(response);
                             }
-                        }).fail(function(err){
-                            alert(err);  
-                                            
-                     })
-                        
+                        }).fail(function (err) {
+                            alert(err);
+
+                        })
+
                     }
                 }).fail(function (err) {
                     alert(err);
@@ -141,14 +153,14 @@
                 <hr style="width: 50px; border-top: 2px solid black; margin: 8px auto 0;">
             </div>
 
-           
+
 
             <div class=" col-md-12 md-3">
                 <label for="inputEmail4" class="form-label">Email:</label>
                 <input type="email" class="form-control" id="emailid" name="emailid" required>
 
             </div>
-           
+
             <br>
             <div class=" col-8 md-3">
                 <label class="form-label">payment Name:</label>
@@ -156,13 +168,13 @@
 
             </div>
             <br>
-         
 
-           
-            
+
+
+
 
             <div class="col-md-4">
-                <label  class="form-label">Category:</label>
+                <label class="form-label">Category:</label>
                 <select id="Category" class="form-select">
                     <option selected>Choose...</option>
                     <option value="bills">bills</option>
@@ -170,32 +182,32 @@
                     <option value="loan">loan</option>
                     <option value="tax">tax</option>
                     <option value="other">other</option>
-                    
+
                 </select>
             </div>
 
-            
-
-           
 
 
 
 
-           
+
+
+
+
             <div class=" col-8 md-3">
                 <label class="form-label">Amount:</label>
                 <input type="text" class="form-control" id="amount" name="amount" required>
 
             </div>
-               <div class=" col-4 md-3">
+            <div class=" col-4 md-3">
                 <label class="form-label">Deadline:</label>
                 <input type="datetime-local" class="form-control" id="deadline" name="deadline" required>
 
             </div>
 
-         
 
-       
+
+
 
             <!-- pic----------------------------------------------------- -->
 
@@ -210,14 +222,14 @@
             </div>
 
 
-        
+
 
             <div class="col-12">
                 <button type="button" class="btn btn-dark" id="pub_payment" name="pub_payment">Create Payment</button>
 
             </div>
 
-              <div class=" col-8 md-3">
+            <div class=" col-8 md-3">
                 <label class="form-label">ID:</label>
                 <input type="text" class="form-control" id="id" name="id" required>
                 <LAbel>Would be auto generated</LAbel>
