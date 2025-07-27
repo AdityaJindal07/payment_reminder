@@ -297,7 +297,8 @@ app.get("/do-fetch-all", verifyToken, function (req, resp) {
         else {
             for (var i = 0; i < allRecords.length; i++) {
                 if (allRecords[i].deadline) {
-                    allRecords[i].deadline = allRecords[i].deadline + '+05:30';
+                  
+                    Intl.DateTimeFormat('en-in').format(allRecords[i].deadline)
                 }
             }
             resp.send(allRecords);
