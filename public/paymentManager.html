@@ -42,9 +42,7 @@
                 $http.get(url).then(allGoodFx, someBadFx);
 
                 function allGoodFx(response) {
-                    response.data.forEach(obj => {
-                        obj.deadline = shiftToIST(obj.deadline);
-                    });
+                   
                     $scope.jsonArray = response.data;
                 }
 
