@@ -283,6 +283,8 @@ app.post("/get_id", verifyToken, function (req, resp) {
     })
 })
 
+
+
 app.get("/do-fetch-all", verifyToken, function (req, resp) {
 
     console.log(req.user.mailid);

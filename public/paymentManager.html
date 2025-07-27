@@ -33,6 +33,11 @@
 
         mymodule.controller("kuchController", function ($scope, $http) {
             $scope.jsonArray = [];
+
+            function shiftToIST(utcDate) {
+                const d = new Date(utcDate);
+                return new Date(d.getTime() + (5.5 * 60 * 60 * 1000));
+            }
             $scope.doFetchAll = function () {
                 var url = "/do-fetch-all";
 
@@ -40,6 +45,9 @@
                 $http.get(url).then(allGoodFx, someBadFx);
 
                 function allGoodFx(response) {
+                    response.data.forEach(obj => {
+                        obj.deadline = shiftToIST(obj.deadline);
+                    });
                     $scope.jsonArray = response.data;
                 }
 
