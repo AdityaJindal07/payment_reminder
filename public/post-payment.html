@@ -64,6 +64,17 @@
     <script>
         $(document).ready(function () {
 
+
+            var inputVal = document.getElementById("deadline").value;
+            var date = new Date(inputVal);
+
+            // Subtract 5 hours 30 minutes (IST offset) in milliseconds
+            var offsetMillis = (5 * 60 + 30) * 60 * 1000; // 5*60 + 30 minutes converted to ms
+            var adjustedDate = new Date(date.getTime() - offsetMillis);
+
+            // Convert back to ISO string WITHOUT timezone offset suffix
+            var isoStringWithoutOffset = adjustedDate.toISOString().slice(0, 19);
+
             $.ajax({
                 type: "get",
                 url: "/read"
@@ -97,7 +108,7 @@
                         paymentname: $("#paymentname").val(),
                         Category: $("#Category").val(),
                         amount: $("#amount").val(),
-                        deadline: $("#deadline").val(),
+                        deadline: isoStringWithoutOffset,
                         otherinfo: $("#otherinfo").val(),
                     }
                 }
