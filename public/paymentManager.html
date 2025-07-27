@@ -31,10 +31,12 @@
     <script>
         var mymodule = angular.module("kuchModule", []);
 
-        mymodule.filter('istDate', function () {
-            return function (input) {
-                let date = new Date(input);
-                return date.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+        mymodule.filter('istTime', function () {
+            return function (utcDate) {
+                if (!utcDate) return '';
+                let date = new Date(utcDate);
+                date.setMinutes(date.getMinutes() + 330); // Add 5:30 for IST
+                return date.toLocaleString('en-IN'); // Formats as IST date/time
             };
         });
 
@@ -152,7 +154,7 @@
                 <td>{{obj.paymentname}}</td>
                 <td>{{obj.Category}}</td>
                 <td>{{obj.amount}}</td>
-                <td>{{obj.deadline | istDate}}</td>
+                <td>{{obj.deadline | istTime}}</td>
                 <td>{{obj.otherinfo}}</td>
                 <td>{{obj.status}}</td>
 
