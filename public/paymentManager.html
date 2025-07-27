@@ -31,15 +31,6 @@
     <script>
         var mymodule = angular.module("kuchModule", []);
 
-        mymodule.filter('istTime', function () {
-            return function (utcDate) {
-                if (!utcDate) return '';
-                let date = new Date(utcDate);
-                date.setMinutes(date.getMinutes() + 330); // Add 5:30 for IST
-                return date.toLocaleString('en-IN'); // Formats as IST date/time
-            };
-        });
-
         mymodule.controller("kuchController", function ($scope, $http) {
             $scope.jsonArray = [];
             $scope.doFetchAll = function () {
@@ -154,7 +145,7 @@
                 <td>{{obj.paymentname}}</td>
                 <td>{{obj.Category}}</td>
                 <td>{{obj.amount}}</td>
-                <td>{{obj.deadline | istTime}}</td>
+                <td>{{obj.deadline | date:'dd/MM/yyyy, h:mm a'}}</td>
                 <td>{{obj.otherinfo}}</td>
                 <td>{{obj.status}}</td>
 

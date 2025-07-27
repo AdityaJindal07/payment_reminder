@@ -287,7 +287,7 @@ app.get("/do-fetch-all", verifyToken, function (req, resp) {
 
     console.log(req.user.mailid);
 
-    mySqlVen.query("select * from payment_details where emailid = ?", [req.user.mailid], function (err, allRecords) {
+    mySqlVen.query("select * from payment_details where emailid = ?",[req.user.mailid], function (err, allRecords) {
         if (err) {
             resp.send(err);
 
@@ -546,14 +546,11 @@ function scheduleReminders() {
 
             if (task.status == "pending") {
 
-                let rawDeadline = new Date(task.deadline);
-                let istDeadline = new Date(rawDeadline.getTime() + (5.5 * 60 * 60 * 1000)); 
-
-                let reminderTime1 = new Date(istDeadline.getTime() - 2 * 24 * 60 * 60 * 1000);
-                let reminderTime2 = new Date(istDeadline);
-                let reminderTime3 = new Date(istDeadline);
-                reminderTime3.setHours(23, 59, 59, 999);
+                let reminderTime1 = new Date(new Date(task.deadline) - 2 * 24 * 60 * 60 * 1000);
+                let reminderTime2 = new Date(task.deadline);
                 
+                let reminderTime3 = new Date(task.deadline);
+                reminderTime3.setHours(23, 59, 59, 999);
                 if (reminderTime1 > new Date() && !scheduledJobs.has(key1)) {
                     const job1 = schedule.scheduleJob(reminderTime1, function () {
                         mail_reminder(task.emailid, task.paymentname, task.deadline, task.rid);
@@ -576,7 +573,7 @@ function scheduleReminders() {
                             if (err) {
                                 console.log(err);
                             }
-                            else {
+                            else{
                                 console.log("overdue");
                             }
                         })
