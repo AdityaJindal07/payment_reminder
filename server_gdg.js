@@ -7,10 +7,13 @@ require('dotenv').config();
 var mysql2 = require("mysql2");
 var dbconfig = process.env.db_config;
 let mySqlVen = mysql2.createConnection(dbconfig);
+var schedule = require("node-schedule");
 
 mySqlVen.connect(function (errKuch) {
-    if (errKuch == null)
+    if (errKuch == null) {
         console.log("AiVen Connnected Successfully");
+        scheduleReminders();
+    }
     else
         console.log(errKuch.message);
 })
@@ -226,6 +229,7 @@ function verifyToken(req, res, next) {
 
     if (verified) {
         req.user = verified;
+        console.log(req.user)
         next();
     } else {
         res.send("Invalid Token");
@@ -241,7 +245,7 @@ app.get("/read", function (req, resp) {
 
 let rid;
 
-app.post("/post_payment",verifyToken, function (req, resp) {
+app.post("/post_payment", verifyToken, function (req, resp) {
 
     let emailid = req.body.emailid;
     let paymentname = req.body.paymentname;
@@ -250,13 +254,14 @@ app.post("/post_payment",verifyToken, function (req, resp) {
     let deadline = req.body.deadline;
     let otherinfo = req.body.otherinfo;
 
-    rid = Math.floor(1000 + Math.random() * 9000);
+    rid = Math.floor(100000 + Math.random() * 900000);
 
     mySqlVen.query("insert into payment_details(rid ,emailid, paymentname, Category, amount, deadline,status, otherinfo) values(?,?,?,?,?,?,?,?)", [rid, emailid, paymentname, Category, amount, deadline, "pending", otherinfo], function (err) {
         if (err) {
             resp.send("somethings wrong");
         }
         else {
+            scheduleReminders();
             resp.send("good");
         }
     })
@@ -264,7 +269,7 @@ app.post("/post_payment",verifyToken, function (req, resp) {
 
 })
 
-app.post("/get_id",verifyToken, function (req, resp) {
+app.post("/get_id", verifyToken, function (req, resp) {
 
     mySqlVen.query("select * from payment_details where rid=?", [rid], function (err, allRecords) {
         if (allRecords.length == 0) {
@@ -277,7 +282,7 @@ app.post("/get_id",verifyToken, function (req, resp) {
     })
 })
 
-app.get("/do-fetch-all",verifyToken, function (req, resp) {
+app.get("/do-fetch-all", verifyToken, function (req, resp) {
 
     mySqlVen.query("select * from payment_details", function (err, allRecords) {
         if (err) {
@@ -290,58 +295,303 @@ app.get("/do-fetch-all",verifyToken, function (req, resp) {
     })
 })
 
-app.get("/do_logout",verifyToken, function (req, resp) {
-    resp.cookie("token","");
+app.get("/do_logout", verifyToken, function (req, resp) {
+    resp.cookie("token", "");
     resp.redirect("/");
 })
 
-app.patch("/paid",verifyToken,function(req,resp){
+app.patch("/paid", verifyToken, function (req, resp) {
     let rid = req.body.rid;
 
-    mySqlVen.query("update payment_details set status=? where rid=?",["paid",rid],function(err){
-        if(err){
+    mySqlVen.query("update payment_details set status=? where rid=?", ["paid", rid], function (err) {
+        if (err) {
             resp.send(err.message);
         }
         else
-        resp.send("updated");
+            resp.send("updated");
     })
 })
-app.patch("/overdue",verifyToken,function(req,resp){
+
+
+app.patch("/cancelled", verifyToken, function (req, resp) {
     let rid = req.body.rid;
 
-    mySqlVen.query("update payment_details set status=? where rid=?",["overdue",rid],function(err){
-        if(err){
+    mySqlVen.query("update payment_details set status=? where rid=?", ["cancelled", rid], function (err) {
+        if (err) {
             resp.send(err.message);
         }
-        else{
+        else {
             resp.send("updated")
         }
     })
 })
 
-app.patch("/cancelled",verifyToken,function(req,resp){
+app.patch("/pending", verifyToken, function (req, resp) {
     let rid = req.body.rid;
 
-    mySqlVen.query("update payment_details set status=? where rid=?",["cancelled",rid],function(err){
-        if(err){
+    mySqlVen.query("update payment_details set status=? where rid=?", ["pending", rid], function (err) {
+        if (err) {
             resp.send(err.message);
         }
-        else{
+        else {
             resp.send("updated")
         }
     })
 })
 
-app.patch("/pending",verifyToken,function(req,resp){
-    let rid = req.body.rid;
+function mail_reminder(emailid, paymentname, deadline, rid) {
 
-    mySqlVen.query("update payment_details set status=? where rid=?",["pending",rid],function(err){
-        if(err){
-            resp.send(err.message);
+    console.log("sending mail");
+
+    var mailer = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+            user: Email,
+            pass: Pass
         }
-        else{
-            resp.send("updated")
+    });
+
+    var maildetail = {
+        from: Email,
+        to: emailid,
+        subject: `payment-reminder for id: ${rid}`,
+        html: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Reminder</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    h2 {
+      color: #007bff;
+      text-align: center;
+    }
+    .info {
+      font-size: 16px;
+      margin: 20px 0;
+      line-height: 1.6;
+    }
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🔔 Payment Due Reminder</h2>
+    <p class="info">
+      Dear User,<br><br>
+      This is a gentle reminder that your payment is due on <strong>${deadline}</strong>.<br><br>
+      <strong>Payment Name:</strong> ${paymentname}<br>
+      <strong>Payment ID:</strong> ${rid}<br>
+      <strong>Email:</strong> ${emailid}<br><br>
+      Please make sure to complete the payment before the due date to avoid any inconvenience.
+    </p>
+    <div class="footer">
+      Thank you for your attention.<br>
+      — gdg-LNMIIT
+    </div>
+  </div>
+</body>
+</html>
+`
+    }
+
+
+    mailer.sendMail(maildetail, function (err, result) {
+
+        if (err) {
+            console.log(err);
         }
+        else {
+            console.log(result);
+            // resp.send("check you email!");
+        }
+
     })
-})
 
+
+
+}
+
+
+
+function mail_reminder_overdue(emailid, paymentname, deadline, rid) {
+
+    console.log("sending mail");
+
+    var mailer = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
+        auth: {
+            user: Email,
+            pass: Pass
+        }
+    });
+
+    var maildetail = {
+        from: Email,
+        to: emailid,
+        subject: `payment-reminder for id: ${rid}`,
+        html: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Overdue Payment Notice</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    h2 {
+      color: #dc3545;
+      text-align: center;
+    }
+    .info {
+      font-size: 16px;
+      margin: 20px 0;
+      line-height: 1.6;
+    }
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>⚠️ Overdue Payment Alert</h2>
+    <p class="info">
+      Dear User,<br><br>
+      Our records show that your payment due on <strong>${deadline}</strong> has not been completed.<br><br>
+      <strong>Payment Name:</strong> ${paymentname}<br>
+      <strong>Payment ID:</strong> ${rid}<br>
+      <strong>Email:</strong> ${emailid}<br><br>
+      Kindly take immediate action to settle the payment and avoid any further issues.
+    </p>
+    <div class="footer">
+      This is an automated reminder from gdg-LNMIIT.<br>
+      Thank you for your prompt attention.
+    </div>
+  </div>
+</body>
+</html>
+`
+
+    }
+
+
+    mailer.sendMail(maildetail, function (err, result) {
+
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log(result);
+            // resp.send("check you email!");
+        }
+
+    })
+
+
+
+}
+
+
+
+const scheduledJobs = new Map();
+
+function scheduleReminders() {
+    mySqlVen.query("SELECT * from payment_details", function (err, results) {
+        if (err) return console.log("DB error:", err);
+
+        results.forEach(function (task) {
+            const key1 = `${task.rid}-2days`;
+            const key2 = `${task.rid}-30sec`;
+            const key3 = `${task.rid}-0sec`;
+
+            if (task.status == "pending") {
+
+                let reminderTime1 = new Date(new Date(task.deadline) - 2 * 24 * 60 * 60 * 1000);
+                let reminderTime2 = new Date(task.deadline);
+                reminderTime2.setHours(0, 0, 0, 0);
+                let reminderTime3 = new Date(task.deadline);
+                if (reminderTime1 > new Date() && !scheduledJobs.has(key1)) {
+                    const job1 = schedule.scheduleJob(reminderTime1, function () {
+                        mail_reminder(task.emailid, task.paymentname, task.deadline, task.rid);
+                        scheduledJobs.delete(key1);
+                    });
+                    scheduledJobs.set(key1, job1);
+                }
+                if (reminderTime2 > new Date() && !scheduledJobs.has(key2)) {
+                    const job2 = schedule.scheduleJob(reminderTime2, function () {
+                        mail_reminder(task.emailid, task.paymentname, task.deadline, task.rid);
+                        scheduledJobs.delete(key2);
+                    });
+                    scheduledJobs.set(key2, job2);
+                }
+                if (reminderTime3 > new Date()) {
+
+
+                    const job3 = schedule.scheduleJob(reminderTime3, function () {
+                        mySqlVen.query("update payment_details set status = ? where rid = ?", ["overdue", task.rid], function (err) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else{
+                                console/log("overdue");
+                            }
+                        })
+                        mail_reminder_overdue(task.emailid, task.paymentname, task.deadline, task.rid);
+                        scheduledJobs.delete(key3);
+                    });
+                    scheduledJobs.set(key3, job3);
+                }
+
+            }
+        });
+
+
+    });
+}
+
+
+
+// scheduleReminders();
+// console.log("scheduleReminders started");
+
+schedule.scheduleJob('0 0 * * *', function () {
+    console.log("Running daily scheduleReminders...");
+    scheduleReminders();
+});

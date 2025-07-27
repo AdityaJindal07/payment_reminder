@@ -143,12 +143,12 @@
                 <td>{{obj.paymentname}}</td>
                 <td>{{obj.Category}}</td>
                 <td>{{obj.amount}}</td>
-                <td>{{obj.deadline}}</td>
+                <td>{{obj.deadline | date:'medium'}}</td>
                  <td>{{obj.otherinfo}}</td>
                 <td>{{obj.status}}</td>
                
                 <td> <input type="button" value="paid" class="btn btn-primary" ng-click="paid(obj.rid)">
-                    <input type="button" value="overdue" class="btn btn-danger" ng-click="overdue(obj.rid)">
+                    <!-- <input type="button" value="overdue" class="btn btn-danger" ng-click="overdue(obj.rid)"> -->
                     <input type="button" value="cancelled" class="btn btn-secondary" ng-click="cancelled(obj.rid)">
                      <input type="button" value="pending" class="btn btn-dark" ng-click="pending(obj.rid)">
                 </td>
