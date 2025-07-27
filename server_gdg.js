@@ -548,7 +548,7 @@ function scheduleReminders() {
 
                 let reminderTime1 = new Date(new Date(task.deadline) - 2 * 24 * 60 * 60 * 1000);
                 let reminderTime2 = new Date(task.deadline);
-                reminderTime2.setHours(0, 0, 0, 0);
+                reminderTime3.setHours(23, 59, 59, 999);
                 let reminderTime3 = new Date(task.deadline);
                 if (reminderTime1 > new Date() && !scheduledJobs.has(key1)) {
                     const job1 = schedule.scheduleJob(reminderTime1, function () {
