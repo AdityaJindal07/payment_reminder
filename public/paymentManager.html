@@ -148,7 +148,7 @@
                 <td>{{obj.paymentname}}</td>
                 <td>{{obj.Category}}</td>
                 <td>{{obj.amount}}</td>
-                <td>{{obj.deadline | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td>{{obj.deadline.replace('T', ' ').replace('.000Z', '') }}</td>
                 <td>{{obj.otherinfo}}</td>
                 <td>{{obj.status}}</td>
 
