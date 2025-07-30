@@ -65,6 +65,21 @@
         $(document).ready(function () {
 
 
+
+            $.ajax({
+                type: "get",
+                url: "/read",
+                dataType: "text"
+            }).then(function (response) {
+                $("#emailid").val(response);
+            }).fail(function (err) {
+                console.log("Error reading email:", err);
+                alert("Could not auto-load user email.");
+            });
+
+            $("#pub_payment").click(function () {
+
+                
             var inputVal = document.getElementById("deadline").value;
             var date = new Date(inputVal);
 
@@ -75,31 +90,7 @@
             // Convert back to ISO string WITHOUT timezone offset suffix
             var isoStringWithoutOffset = adjustedDate.toISOString().slice(0, 19);
 
-            $.ajax({
-                type: "get",
-                url: "/read"
-            }).then(function (response) {
-                $("#emailid").val(response);
-            }).fail(function (err) {
-                console.log("Error reading email:", err);
-                alert("Could not auto-load user email.");
-            });
 
-
-            $("#emailid").blur(function () {
-                let email = $(this).val().trim();
-                let regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-                if (email === "") {
-                    alert("fill Email Id");
-
-                }
-                else if (regex.test(email) == false) {
-                    alert("Invalid Email Id");
-
-                }
-            })
-
-            $("#pub_payment").click(function () {
                 let obj = {
                     type: "post",
                     url: "/post_payment",
@@ -139,6 +130,24 @@
                     alert(err);
                 })
             })
+
+
+
+
+            $("#emailid").blur(function () {
+                let email = $(this).val().trim();
+                let regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+                if (email === "") {
+                    alert("fill Email Id");
+
+                }
+                else if (regex.test(email) == false) {
+                    alert("Invalid Email Id");
+
+                }
+            })
+
+            
         })
     </script>
 
