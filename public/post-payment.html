@@ -85,7 +85,7 @@
 
             // Subtract 5 hours 30 minutes (IST offset) in milliseconds
             var offsetMillis = (5 * 60 + 30) * 60 * 1000; // 5*60 + 30 minutes converted to ms
-            var adjustedDate = new Date(date.getTime() + 2*offsetMillis);
+            var adjustedDate = new Date(date.getTime() + offsetMillis);
 
             // Convert back to ISO string WITHOUT timezone offset suffix
             var isoStringWithoutOffset = adjustedDate.toISOString().slice(0, 19);
